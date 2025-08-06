@@ -189,14 +189,6 @@ cd pipeline-data-db
 4. **Análise de Infraestrutura**: Impacto de semáforos e sinalização
 5. **Análise Meteorológica**: Influência das condições climáticas
 
-## 🛠️ Próximos Passos
-
-- [ ] Implementar visualizações interativas
-- [ ] Adicionar pipeline de análise automática
-- [ ] Integrar dados de anos adicionais
-- [ ] Criar dashboard em tempo real
-- [ ] Implementar modelos preditivos
-
 ## 👥 Contribuições
 
 ### Como Contribuir
