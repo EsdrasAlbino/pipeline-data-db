@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Traffic Accidents Data Pipeline (2019-2021) 🚗💥</title>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+            color: white;
+            padding: 60px 0;
+            text-align: center;
+        }
+        
+        header h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+        
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .navigation {
+            background: #fff;
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .nav-list {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+        }
+        
+        .nav-list a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-list a:hover {
+            color: #22c55e;
+        }
+        
+        .resources-section {
+            background: #fff;
+            padding: 60px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .resources-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+        
+        .resource-card {
+            background: #f0fdf4;
+            padding: 30px;
+            border-radius: 10px;
+            border-left: 5px solid #22c55e;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .resource-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .resource-card h3 {
+            color: #16a34a;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+        
+        .resource-card .links {
+            margin-top: 20px;
+        }
+        
+        .resource-card .links a {
+            display: inline-block;
+            background: #22c55e;
+            color: white;
+            padding: 8px 16px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            transition: background 0.3s;
+        }
+        
+        .resource-card .links a:hover {
+            background: #16a34a;
+        }
+        
+        main {
+            background: #fff;
+            padding: 60px 0;
+        }
+        
+        section {
+            margin-bottom: 60px;
+        }
+        
+        h2 {
+            color: #333;
+            font-size: 2.2rem;
+            margin-bottom: 30px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #22c55e;
+        }
+        
+        h3 {
+            color: #16a34a;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            margin-top: 30px;
+        }
+        
+        h4 {
+            color: #333;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            margin-top: 25px;
+        }
+        
+        .highlight-box {
+            background: #f0fdf4;
+            border-left: 5px solid #22c55e;
+            padding: 25px;
+            margin: 30px 0;
+            border-radius: 5px;
+        }
+        
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 20px 0;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+        }
+        
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin: 30px 0;
+        }
+        
+        .pipeline-diagram {
+            text-align: center;
+            margin: 30px 0;
+        }
+        
+        .pipeline-diagram img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 30px 0;
+            background: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .comparison-table th,
+        .comparison-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .comparison-table th {
+            background: #22c55e;
+            color: white;
+            font-weight: 600;
+        }
+        
+        .comparison-table tr:hover {
+            background: #f0fdf4;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin: 30px 0;
+        }
+        
+        .feature-card {
+            background: #f0fdf4;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            transition: transform 0.3s;
+            border: 1px solid #bbf7d0;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: #22c55e;
+        }
+        
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .tech-badge {
+            background: #22c55e;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .result-item {
+            background: #f0fdf4;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid #bbf7d0;
+        }
+        
+        .result-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #16a34a;
+            display: block;
+        }
+        
+        footer {
+            background: #2d3748;
+            color: white;
+            text-align: center;
+            padding: 40px 0;
+        }
+        
+        .footer-links {
+            margin-top: 20px;
+        }
+        
+        .footer-links a {
+            color: #4ade80;
+            text-decoration: none;
+            margin: 0 15px;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: #22c55e;
+        }
+        
+        .btn {
+            display: inline-block;
+            background: #22c55e;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background 0.3s;
+            margin-top: 20px;
+        }
+        
+        .btn:hover {
+            background: #16a34a;
+        }
+        
+        ul, ol {
+            margin-left: 20px;
+            margin-bottom: 20px;
+        }
+        
+        li {
+            margin-bottom: 8px;
+        }
+        
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2rem;
+            }
+            
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-list {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Traffic Accidents Data Pipeline</h1>
+            <p>A comprehensive data integration and consolidation pipeline for traffic accident data from 2019-2021. This project implements both ETL and ELT approaches to create a unified, consistent and standardized database for in-depth analysis and insights generation.</p>
+        </div>
+    </header>
+
+    <nav class="navigation">
+        <div class="container">
+            <ul class="nav-list">
+                <li><a href="#resources">Resources</a></li>
+                <li><a href="#overview">Overview</a></li>
+                <li><a href="#objectives">Objectives</a></li>
+                <li><a href="#tech-stack">Technology</a></li>
+                <li><a href="#data-sources">Data Sources</a></li>
+                <li><a href="#pipelines">Pipelines</a></li>
+                <li><a href="#comparison">ETL vs ELT</a></li>
+                <li><a href="#execution">How to Run</a></li>
+                <li><a href="#results">Results</a></li>
+                <li><a href="#analysis">Analysis</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section id="resources" class="resources-section">
+        <div class="container">
+            <h2><i class="fas fa-bookmark" style="margin-right: 10px;"></i>Project Resources</h2>
+            <p>Access all project documentation, presentations, and related materials:</p>
+            
+            <div class="resources-grid">
+                <div class="resource-card">
+                    <h3><i class="fas fa-presentation" style="margin-right: 10px;"></i>Presentation</h3>
+                    <p>Complete project presentation with methodology and results.</p>
+                    <div class="links">
+                        <a href="https://www.canva.com/design/DAGvf08koGg/JsmPZcqUZg8kYtdtGkAy8A/edit?utm_content=DAGvf08koGg&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" target="_blank"><i class="fas fa-external-link-alt"></i> View Presentation</a>
+                    </div>
+                </div>
+                
+                <div class="resource-card">
+                    <h3><i class="fas fa-project-diagram" style="margin-right: 10px;"></i>Diagrams</h3>
+                    <p>Technical diagrams and visual representations of the pipeline architecture.</p>
+                    <div class="links">
+                        <a href="https://drive.google.com/file/d/1HSZZu5SY8mKOHlnUKwGKTpMVpGr5SlHi/view?usp=sharing" target="_blank"><i class="fas fa-project-diagram"></i> View Diagrams</a>
+                    </div>
+                </div>
+                
+                <div class="resource-card">
+                    <h3><i class="fas fa-file-alt" style="margin-right: 10px;"></i>Technical Report</h3>
+                    <p>Comprehensive technical documentation and analysis report.</p>
+                    <div class="links">
+                        <a href="https://docs.google.com/document/d/1sBqjl0Z5GeqzFMZ9-rJAQAQFY-HNfIuKorcujbrV0Qg/edit?usp=sharing" target="_blank"><i class="fas fa-file-alt"></i> Read Report</a>
+                    </div>
+                </div>
+                
+                <div class="resource-card">
+                    <h3><i class="fab fa-github" style="margin-right: 10px;"></i>Source Code</h3>
+                    <p>Complete source code repository with all implementation files.</p>
+                    <div class="links">
+                        <a href="https://github.com/EsdrasAlbino/pipeline-data-db" target="_blank"><i class="fab fa-github"></i> GitHub Repository</a>
+                    </div>
+                </div>
+                
+                <div class="resource-card">
+                    <h3><i class="fab fa-google" style="margin-right: 10px;"></i>Google Colab</h3>
+                    <p>Interactive notebook ready to run in Google Colab environment.</p>
+                    <div class="links">
+                        <a href="https://colab.research.google.com/drive/1M4cqYrMJ_Nwv3ICXHxgXa2ijPVi3yJMM?usp=sharing" target="_blank"><i class="fab fa-google"></i> Open in Colab</a>
+                    </div>
+                </div>
+                
+                <div class="resource-card">
+                    <h3><i class="fas fa-file-code" style="margin-right: 10px;"></i>Jupyter Notebook</h3>
+                    <p>Local Jupyter notebook with complete ETL/ELT implementation.</p>
+                    <div class="links">
+                        <a href="https://github.com/EsdrasAlbino/pipeline-data-db/blob/main/ETL_Crash.ipynb" target="_blank"><i class="fas fa-file-code"></i> View Notebook</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <main>
+        <div class="container">
+            <section id="overview">
+                <h2><i class="fas fa-info-circle" style="margin-right: 10px;"></i>Project Overview</h2>
+                <p>This project implements a complete pipeline for integrating and consolidating traffic accident data from three consecutive years (2019, 2020, and 2021). The main goal is to create a unified, cohesive, and standardized database that enables in-depth analysis, complex queries, and generation of relevant insights about traffic accidents.</p>
+                
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-sync-alt"></i></div>
+                        <h4>Data Integration</h4>
+                        <p>Consolidate three distinct datasets from different time periods</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-chart-bar"></i></div>
+                        <h4>Standardization</h4>
+                        <p>Create uniform and consistent data structure</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-clock"></i></div>
+                        <h4>Temporal Analysis</h4>
+                        <p>Enable comparisons and analysis over time</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-rocket"></i></div>
+                        <h4>Modern Techniques</h4>
+                        <p>Apply modern ETL/ELT data processing techniques</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="objectives">
+                <h2><i class="fas fa-bullseye" style="margin-right: 10px;"></i>Objectives</h2>
+                <ul>
+                    <li><strong>Data Integration</strong>: Consolidate three distinct datasets from different temporal periods</li>
+                    <li><strong>Standardization</strong>: Create a uniform and consistent data structure</li>
+                    <li><strong>Temporal Analysis</strong>: Facilitate comparisons and analysis over time</li>
+                    <li><strong>ETL/ELT Implementation</strong>: Apply modern data processing techniques</li>
+                </ul>
+            </section>
+
+            <section id="tech-stack">
+                <h2><i class="fas fa-tools" style="margin-right: 10px;"></i>Technology Stack</h2>
+                <div class="tech-stack">
+                    <span class="tech-badge"><i class="fab fa-python"></i> Python</span>
+                    <span class="tech-badge"><i class="fas fa-table"></i> Pandas</span>
+                    <span class="tech-badge"><i class="fas fa-calculator"></i> NumPy</span>
+                    <span class="tech-badge"><i class="fas fa-database"></i> SQLAlchemy</span>
+                    <span class="tech-badge"><i class="fas fa-database"></i> SQLite</span>
+                    <span class="tech-badge"><i class="fas fa-file-code"></i> Jupyter Notebook</span>
+                </div>
+            </section>
+
+            <section id="data-sources">
+                <h2><i class="fas fa-chart-pie" style="margin-right: 10px;"></i>Data Sources</h2>
+                <div class="highlight-box">
+                    <h4>Data Origin</h4>
+                    <ul>
+                        <li><strong>Source</strong>: Traffic accident data from public agencies</li>
+                        <li><strong>Period</strong>: 2019, 2020, and 2021</li>
+                        <li><strong>Format</strong>: CSV files with semicolon delimiters</li>
+                    </ul>
+                </div>
+
+                <h3>Main Columns Structure</h3>
+                <ul>
+                    <li><strong>Temporal</strong>: <code>data</code>, <code>hora</code>, <code>DATA</code> (variations between years)</li>
+                    <li><strong>Location</strong>: <code>endereco</code>, <code>bairro</code>, <code>numero</code>, <code>complemento</code></li>
+                    <li><strong>Vehicles Involved</strong>: <code>auto</code>, <code>moto</code>, <code>ciclom</code>, <code>ciclista</code>, <code>pedestre</code>, <code>onibus</code>, <code>caminhao</code>, <code>viatura</code>, <code>outros</code></li>
+                    <li><strong>Victims</strong>: <code>vitimas</code>, <code>vitimasfatais</code></li>
+                    <li><strong>Infrastructure</strong>: <code>num_semaforo</code>, <code>situacao_semaforo</code>, <code>sinalizacao</code></li>
+                    <li><strong>Conditions</strong>: <code>natureza_acidente</code>, <code>tempo_clima</code>, <code>condicao_via</code></li>
+                </ul>
+            </section>
+
+            <section id="pipelines">
+                <h2><i class="fas fa-cogs" style="margin-right: 10px;"></i>Implemented Processes</h2>
+                
+                <div class="grid-2">
+                    <div>
+                        <h3>1. ETL Pipeline (Extract, Transform, Load)</h3>
+                        <div class="pipeline-diagram">
+                            <img src="public/diagram_etl.png" alt="ETL Diagram" />
+                        </div>
+                        
+                        <h4>Extract</h4>
+                        <div class="code-block">
+# Loading three datasets
+df_2019 = pd.read_csv('acidentes-2019.csv', delimiter=';')
+df_2020 = pd.read_csv('acidentes_2020-novo.csv', delimiter=';')
+df_2021 = pd.read_csv('acidentes2021.csv', delimiter=';')
+                        </div>
+
+                        <h4>Transform</h4>
+                        <ol>
+                            <li><strong>Column Standardization</strong>: Rename <code>DATA</code> to <code>data</code> (2019), Remove inconsistent columns between years</li>
+                            <li><strong>Temporal Treatment</strong>: Fix invalid times (<code>24:00:00</code> → <code>00:00:00</code>), Create unified <code>timestamp</code> column, Add <code>ano</code> column</li>
+                            <li><strong>Type Standardization</strong>: Convert numeric columns to integers, Handle null/empty values, Normalize addresses</li>
+                        </ol>
+
+                        <h4>Load</h4>
+                        <ul>
+                            <li>DataFrames unification</li>
+                            <li>Export to consolidated CSV</li>
+                            <li>Insert into SQLite database</li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h3>2. ELT Pipeline (Extract, Load, Transform)</h3>
+                        <div class="pipeline-diagram">
+                            <img src="public/diagram_elt.png" alt="ELT Diagram" />
+                        </div>
+
+                        <h4>Extract and Load</h4>
+                        <div class="code-block">
+# Direct loading to database
+for arquivo in lista_arquivos_csv:
+    df_temp = pd.read_csv(arquivo, sep=';', encoding='utf-8')
+    df_temp['ano_do_dado'] = extrair_ano(arquivo)
+    df_temp.to_sql('dados_brutos_sinistros', engine, if_exists='append')
+                        </div>
+
+                        <h4>Transform in Database</h4>
+                        <div class="code-block">
+-- Create timestamp column
+ALTER TABLE dados_brutos_sinistros ADD COLUMN TimeStamp TEXT;
+
+-- Temporal data treatment
+UPDATE dados_brutos_sinistros 
+SET TimeStamp = coalesce(data, DATA) || ' ' || 
+    CASE WHEN hora = '24:00:00' THEN '00:00:00' ELSE hora END;
+
+-- Numeric fields standardization
+UPDATE dados_brutos_sinistros 
+SET numero = CASE 
+    WHEN numero IS NULL OR TRIM(numero) = '' THEN -1 
+    ELSE numero 
+END;
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="comparison">
+                <h2><i class="fas fa-balance-scale" style="margin-right: 10px;"></i>ETL vs ELT Comparison</h2>
+                
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Aspect</th>
+                            <th>ETL</th>
+                            <th>ELT</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Processing</strong></td>
+                            <td>Transformation before loading</td>
+                            <td>Transformation after loading</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Performance</strong></td>
+                            <td>Better for small datasets</td>
+                            <td>Better for large volumes</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Flexibility</strong></td>
+                            <td>Less flexibility for later changes</td>
+                            <td>Greater flexibility for adjustments</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Resources</strong></td>
+                            <td>Uses application resources</td>
+                            <td>Uses database resources</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Maintenance</strong></td>
+                            <td>More complex Python code</td>
+                            <td>More direct and readable SQL</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="grid-2">
+                    <div>
+                        <h4>ETL Advantages</h4>
+                        <ul>
+                            <li>✅ Granular control over transformations</li>
+                            <li>✅ Prior data validation</li>
+                            <li>✅ Better for complex Python logic</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>ELT Advantages</h4>
+                        <ul>
+                            <li>✅ Superior performance for large volumes</li>
+                            <li>✅ Leverages DBMS optimization</li>
+                            <li>✅ Greater flexibility for later adjustments</li>
+                            <li>✅ Complete traceability of raw data</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section id="execution">
+                <h2><i class="fas fa-play-circle" style="margin-right: 10px;"></i>How to Run the Project</h2>
+                
+                <h3>Prerequisites</h3>
+                <div class="code-block">
+pip install pandas numpy sqlalchemy openpyxl
+                </div>
+
+                <h3>Execution Steps</h3>
+                <ol>
+                    <li>
+                        <strong>Clone the repository</strong>:
+                        <div class="code-block">
+git clone https://github.com/EsdrasAlbino/pipeline-data-db.git
+cd pipeline-data-db
+                        </div>
+                    </li>
+                    <li><strong>Prepare the data</strong>: Place CSV files in the project root, Ensure filenames match expected ones</li>
+                    <li><strong>Run the notebook</strong>: Open <code>ETL_Crash.ipynb</code> in Jupyter Notebook or Google Colab, Execute cells sequentially</li>
+                </ol>
+
+                <h3>Execution Structure</h3>
+                <ol>
+                    <li><strong>Cell 1</strong>: Installation and import of dependencies</li>
+                    <li><strong>Cell 2</strong>: Complete ETL pipeline</li>
+                    <li><strong>Cell 3</strong>: Complete ELT pipeline</li>
+                    <li><strong>Cell 4</strong>: Consolidated Excel file generation</li>
+                </ol>
+
+                <a href="https://github.com/EsdrasAlbino/pipeline-data-db" class="btn" target="_blank">View on GitHub</a>
+            </section>
+
+            <section id="results">
+                <h2><i class="fas fa-chart-line" style="margin-right: 10px;"></i>Expected Results</h2>
+                
+                <h3>Generated Files</h3>
+                <ul>
+                    <li><code>banco_etl.db</code>: SQLite database with ETL processed data</li>
+                    <li><code>banco_elt.db</code>: SQLite database with ELT processed data</li>
+                    <li><code>acidentes_unificados_2019-2021.csv</code>: Consolidated CSV</li>
+                    <li><code>dados_brutos_sinistros_consolidados.xlsx</code>: Excel with analysis</li>
+                </ul>
+
+                <h3>Final Data Structure</h3>
+                <div class="results-grid">
+                    <div class="result-item">
+                        <span class="result-number">45,000+</span>
+                        <p>Consolidated accidents</p>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-number">2019-2021</span>
+                        <p>Time period</p>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-number">~25</span>
+                        <p>Standardized fields</p>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-number">100%</span>
+                        <p>Clean and consistent data</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="analysis">
+                <h2><i class="fas fa-search" style="margin-right: 10px;"></i>Possible Analysis</h2>
+                
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-chart-line"></i></div>
+                        <h4>Temporal Analysis</h4>
+                        <p>Evolution of accidents over the years</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-map-marked-alt"></i></div>
+                        <h4>Geographic Analysis</h4>
+                        <p>Distribution by neighborhoods and addresses</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                        <h4>Severity Analysis</h4>
+                        <p>Relationship between vehicle types and fatalities</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-traffic-light"></i></div>
+                        <h4>Infrastructure Analysis</h4>
+                        <p>Impact of traffic lights and signaling</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-cloud-sun"></i></div>
+                        <h4>Weather Analysis</h4>
+                        <p>Influence of weather conditions</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p><strong>Federal University of Pernambuco</strong><br>
+            Course: CIN0137 (BD-CC) - Database Systems</p>
+            
+            <div class="footer-links">
+                <a href="https://github.com/EsdrasAlbino/pipeline-data-db" target="_blank">GitHub Repository</a>
+                <a href="https://www.ufpe.br" target="_blank">UFPE</a>
+                <a href="https://www.cin.ufpe.br" target="_blank">CIn - UFPE</a>
+            </div>
+            
+            <p style="margin-top: 30px; opacity: 0.8;">
+                ⭐ <strong>If this project was useful to you, consider giving it a star!</strong>
+            </p>
+        </div>
+    </footer>
+</body>
+</html>
