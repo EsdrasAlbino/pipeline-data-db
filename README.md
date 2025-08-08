@@ -40,8 +40,6 @@ pipeline-data-db/
 ### Fonte dos Dados
 - **Origem**: Dados de acidentes de trânsito de órgãos públicos
 - **Período**: 2019, 2020 e 2021
-- **Formato Original**: CSV com separador ';'
-- **Codificação**: UTF-8
 
 ### Estrutura das Bases Originais
 
@@ -56,6 +54,8 @@ pipeline-data-db/
 ## 🔄 Processos Implementados
 
 ### 1. Pipeline ETL (Extract, Transform, Load)
+
+![Diagrama ETL](public/diagram_etl.png)
 
 #### **Extração (Extract)**
 ```python
@@ -86,6 +86,8 @@ df_2021 = pd.read_csv('acidentes2021.csv', delimiter=';')
 - Inserção em banco SQLite
 
 ### 2. Pipeline ELT (Extract, Load, Transform)
+
+![Diagrama ELT](public/diagram_elt.png)
 
 #### **Extração e Carga**
 ```python
@@ -210,9 +212,8 @@ cd pipeline-data-db
 Este projeto está sob a licença MIT. Veja o arquivo `LICENSE` para mais detalhes.
 
 
-**Universidade**: [Nome da Universidade]  
-**Disciplina**: Pipeline de Dados  
-**Semestre**: [Semestre/Ano]
+**Universidade Federal de Pernambuco**  
+**Disciplina**: CIN0137(BD-CC)
 
 ---
 
